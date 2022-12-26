@@ -36,4 +36,4 @@ jobs:
         env:
             CC_TEST_REPORTER_ID: ${{ secrets.PROJECT_TESTS_ID }}
         with:
-            coverageCommand: poetry run pytest --cov=page_loader --cov-report xml
+            coverageCommand: make test-coverage

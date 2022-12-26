@@ -19,5 +19,5 @@ reinstall:
 test:
 		poetry run pytest -v
 
-coverage:
-		poetry run pytest --cov=gendiff
+test-coverage:
+		poetry run pytest --cov=page_analyzer --cov-report xml
