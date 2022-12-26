@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "hexlet-code"
+version = "0.1.0"
+description = "A web application that execute requests over the network and stores data in a database."
+authors = ["Mikhail Orlov <crazyminer398@gmail.com>"]
+packages = [
+  { include = "page_analyzer" },
+]
+
+[tool.poetry.scripts]
+page-loader = "page_analyzer.app:main"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.2.2"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
