@@ -64,7 +64,9 @@ def post_urls():
 
     if exist:
         flash('Page already exists', 'alert-info')
-        return redirect(url_for('get_url_check', id=db.find_url(correct_url).id))
+        return redirect(
+            url_for('get_url_check', id=db.find_url(correct_url).id)
+        )
 
     result = db.add_url(correct_url)
 
@@ -87,4 +89,3 @@ def get_url_check(id):
         'url_analyze.html',
         url=url_address
     )
-

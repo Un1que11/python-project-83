@@ -13,7 +13,12 @@ HOST = os.getenv('HOST')
 
 
 def connect():
-    return psycopg2.connect(dbname=DBNAME, user=USER_NAME, password=PASSWORD, host=HOST)
+    return psycopg2.connect(
+        dbname=DBNAME,
+        user=USER_NAME,
+        password=PASSWORD,
+        host=HOST
+    )
 
 
 def add_url(name: str):
@@ -68,6 +73,8 @@ def find_url(value) -> dict:
 def is_exist_url(name: str) -> bool:
     with connect() as conn:
         with conn.cursor() as cursor:
-            cursor.execute("SELECT COUNT(*) FROM urls WHERE name = %s;", (name,))
+            cursor.execute(
+                "SELECT COUNT(*) FROM urls WHERE name = %s;", (name,)
+            )
             result = cursor.fetchone()
     return bool(result[0])
