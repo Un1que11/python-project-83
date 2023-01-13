@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
-from datetime import datetime
+from datetime import date
 import logging
 
 load_dotenv()
@@ -31,7 +31,7 @@ def add_url(name: str):
                     VALUES (%(name)s, %(created_at)s)
                     RETURNING id;
                     """,
-                    {'name': name, 'created_at': datetime.now()})
+                    {'name': name, 'created_at': date.today()})
                 id = cursor.fetchone()[0]
                 return id
     except psycopg2.Error as err:
