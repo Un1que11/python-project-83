@@ -1,0 +1,63 @@
+{% extends 'index.html' %}
+{% block title %}
+{{ super() }}
+{% endblock %}
+{% block header %}
+{{ super() }}
+{% endblock %}
+{% for category, msg in get_flashed_messages(with_categories=True) %}
+<div class="alert {{ category }}" role="alert">{{ msg }}</div>
+{% endfor %}
+{% block main %}
+<main class="flex-grow-1">
+    <div class="container-lg mt-3">
+        <h1>Site: {{ url.name }}</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-nowrap" data-test="url">
+                <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>{{ url.id }}</td>
+                    </tr>
+                    <tr>
+                        <td>Name</td>
+                        <td>{{ url.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Date of creation</td>
+                        <td>{{ url.created_at }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2 class="mt-5 mb-3">Checks</h2>
+        <form method="post" action="/urls/{{ url.id }}/checks">
+            <input type="submit" class="btn btn-primary" value="Run a check">
+        </form>
+        <div>
+            <table class="table table-bordered table-hover mt-2" data-test="checks">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <th>Code status</th>
+                        <th>h1</th>
+                        <th>title</th>
+                        <th>description</th>
+                        <th>Date of creation</th>
+                    </tr>
+                    {% for check in checks %}
+                    <tr>
+                        <td>{{ check.id }}</td>
+                        <td>{{ check.status_code }}</td>
+                        <td>{{ check.h1 }}</td>
+                        <td>{{ check.title }}</td>
+                        <td>{{ check.content }}</td>
+                        <td>{{ check.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}

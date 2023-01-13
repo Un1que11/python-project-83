@@ -1,0 +1,34 @@
+{% extends 'index.html' %}
+{% block title %}
+{{ super() }}
+{% endblock %}
+{% block header %}
+{{ super() }}
+{% endblock %}
+{% block main %}
+<main class="flex-grow-1">
+    <div class="container-lg mt-3">
+        <h1>Sites</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Last check</th>
+                        <th>Code status</th>
+                    </tr>
+                    {% for url in urls %}
+                    <tr>
+                        <td>{{ url.id }}</td>
+                        <td><a href="/urls/{{url.id}}">{{ url.name }}</a></td>
+                        <td>{{ url.created_at }}</td>
+                        <td>{{ url.status_code }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}
