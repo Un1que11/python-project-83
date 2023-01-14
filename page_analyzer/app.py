@@ -6,7 +6,12 @@ import logging
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 from validators.url import url
-from flask import Flask, render_template, request, flash, url_for, redirect
+from flask import \
+    Flask, \
+    render_template, \
+    request, flash, \
+    url_for, redirect, \
+    get_flashed_messages
 
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -53,10 +58,11 @@ def post_urls():
 
     if not url(url_address):
         flash('Invalid URL', 'alert-danger')
+        messages = get_flashed_messages(with_categories=True)
         return render_template(
             'index.html',
-            main_page=main_page,
-            url=url_address
+            url=url_address,
+            messages=messages
         ), 422
 
     correct_url = get_correct_url(url_address)
@@ -73,9 +79,11 @@ def post_urls():
     match result:
         case None:
             flash('An error has occurred', 'alert-danger')
+            messages = get_flashed_messages(with_categories=True)
             return render_template(
                 'index.html',
-                url=correct_url
+                url=correct_url,
+                messages=messages
             ), 500
         case _:
             flash('Page successfully added', 'alert-success')
@@ -85,7 +93,9 @@ def post_urls():
 @app.get('/urls/<int:id>')
 def get_url_check(id):
     url_address = db.find_url(id)
+    messages = get_flashed_messages(with_categories=True)
     return render_template(
         'url_analyze.html',
-        url=url_address
+        url=url_address,
+        messages=messages
     )

@@ -5,9 +5,11 @@
 {% block header %}
 {{ super() }}
 {% endblock %}
-{% for category, msg in get_flashed_messages(with_categories=True) %}
-<div class="alert {{ category }}" role="alert">{{ msg }}</div>
-{% endfor %}
+{% if messages %}
+    {% for category, message in messages %}
+        <div class="alert {{ category }}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
 {% block main %}
 <main class="flex-grow-1">
     <div class="container-lg mt-3">

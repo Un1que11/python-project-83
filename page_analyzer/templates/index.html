@@ -25,9 +25,11 @@
 {% endblock %}
 {% block main %}
     <main>
-        {% for category, msg in get_flashed_messages(with_categories=True) %}
-        <div class="alert {{ category }}" role="alert">{{ msg }}</div>
-        {% endfor %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
         <div class="container-lg mt-3">
             <h1></h1>
             <div class="row">

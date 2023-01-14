@@ -43,11 +43,11 @@ def add_url(name: str):
 
 def get_urls() -> list:
     with connect() as conn:
-        with conn.cursor() as cursor:
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute("""SELECT
                     u.id,
                     u.name
-                    FROM urls as u
+                    FROM urls AS u
                     ORDER BY u.id;""")
             urls = cursor.fetchall()
     return urls
