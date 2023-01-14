@@ -10,6 +10,7 @@ DBNAME = os.getenv('DBNAME')
 USER_NAME = os.getenv('USER_NAME')
 PASSWORD = os.getenv('PASSWORD')
 HOST = os.getenv('HOST')
+PORT = os.getenv('PORT')
 
 
 def connect():
@@ -17,7 +18,8 @@ def connect():
         dbname=DBNAME,
         user=USER_NAME,
         password=PASSWORD,
-        host=HOST
+        host=HOST,
+        port=PORT
     )
 
 
