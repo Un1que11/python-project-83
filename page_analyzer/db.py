@@ -56,19 +56,18 @@ def get_urls() -> list:
 def find_url(value) -> dict:
     with connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            match value:  # noqa: E999
-                case int():
-                    cursor.execute(
-                        """SELECT id, name, DATE(created_at) as created_at
-                        FROM urls
-                        WHERE id = %s;""", (value,))
-                    row = cursor.fetchone()
-                case str():
-                    cursor.execute(
-                        """SELECT id, name, DATE(created_at) as created_at
-                        FROM urls
-                        WHERE name = %s;""", (value,))
-                    row = cursor.fetchone()
+            if isinstance(value, int):
+                cursor.execute(
+                    """SELECT id, name, DATE(created_at) as created_at
+                    FROM urls
+                    WHERE id = %s;""", (value,))
+                row = cursor.fetchone()
+            elif isinstance(value, str):
+                cursor.execute(
+                    """SELECT id, name, DATE(created_at) as created_at
+                    FROM urls
+                    WHERE name = %s;""", (value,))
+                row = cursor.fetchone()
     return row
 
 

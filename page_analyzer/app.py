@@ -76,18 +76,17 @@ def post_urls():
 
     result = db.add_url(correct_url)
 
-    match result:  # noqa: E999
-        case None:
-            flash('An error has occurred', 'alert-danger')
-            messages = get_flashed_messages(with_categories=True)
-            return render_template(
-                'index.html',
-                url=correct_url,
-                messages=messages
-            ), 500
-        case _:
-            flash('Page successfully added', 'alert-success')
-            return redirect(url_for('get_url_check', id=result))
+    if result is None:
+        flash('An error has occurred', 'alert-danger')
+        messages = get_flashed_messages(with_categories=True)
+        return render_template(
+            'index.html',
+            url=correct_url,
+            messages=messages
+        ), 500
+    else:
+        flash('Page successfully added', 'alert-success')
+        return redirect(url_for('get_url_check', id=result))
 
 
 @app.get('/urls/<int:id>')
