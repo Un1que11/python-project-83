@@ -56,7 +56,7 @@ def get_urls() -> list:
 def find_url(value) -> dict:
     with connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            match value:
+            match value:  # noqa: E999
                 case int():
                     cursor.execute(
                         """SELECT id, name, DATE(created_at) as created_at

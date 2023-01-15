@@ -14,7 +14,7 @@ package-install:
 		python3 -m pip install --user dist/*.whl
 
 lint:
-		poetry run flake8 page_analyzer
+		poetry run ruff page_analyzer
 
 reinstall:
 		pip install --user --force-reinstall dist/*.whl

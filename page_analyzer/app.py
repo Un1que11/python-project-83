@@ -76,7 +76,7 @@ def post_urls():
 
     result = db.add_url(correct_url)
 
-    match result:
+    match result:  # noqa: E999
         case None:
             flash('An error has occurred', 'alert-danger')
             messages = get_flashed_messages(with_categories=True)
