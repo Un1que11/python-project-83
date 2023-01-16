@@ -11,6 +11,7 @@ USER_NAME = os.getenv('USER_NAME')
 PASSWORD = os.getenv('PASSWORD')
 HOST = os.getenv('HOST')
 PORT = os.getenv('PORT')
+# DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 def connect():
@@ -21,6 +22,7 @@ def connect():
         host=HOST,
         port=PORT
     )
+    # return psycopg2.connect(DATABASE_URL)
 
 
 def add_url(name: str):
