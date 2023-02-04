@@ -4,6 +4,7 @@ import os
 import logging
 
 import requests
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 from validators.url import url
@@ -99,9 +100,13 @@ def url_check(id):
     try:
         response = requests.get(url.name)
         status_code = response.status_code
+        page_data = get_page_data(url.name)
         db.add_check({
             'id': id,
-            'status_code': status_code
+            'status_code': status_code,
+            'h1': page_data.get('h1'),
+            'title': page_data.get('title'),
+            'description': page_data.get('description')
         })
         flash('Page successfully checked', 'alert-success')
         return redirect(url_for('get_url_check', id=id))
@@ -119,3 +124,32 @@ def get_correct_url(url_address: str) -> str:
         query='',
         fragment=''
     ).geturl()
+
+
+def get_page_data(url):
+    page_data = {
+        'h1': '',
+        'title': '',
+        'content': ''
+    }
+
+    response = requests.get(url)
+    data = response.text
+    soup = BeautifulSoup(data, 'html.parser')
+    h1 = soup.h1
+    title = soup.title
+    description = soup.find('meta', attrs={'name': 'description'})['content']
+
+    page_data.update(
+        {'h1': h1.get_text()}
+    ) if h1 is not None else page_data.setdefault('h1', '')
+
+    page_data.update(
+        {'title': title.get_text()}
+    ) if title is not None else page_data.setdefault('title', '')
+
+    page_data.update(
+        {'description': description}
+    ) if description is not None else page_data.setdefault('content', '')
+
+    return page_data

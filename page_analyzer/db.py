@@ -51,14 +51,23 @@ def add_check(check: dict):
                     """INSERT INTO url_checks (
                         url_id,
                         status_code,
+                        h1,
+                        title,
+                        description,
                         created_at)
                     VALUES (
                         %(id)s,
                         %(status_code)s,
+                        %(h1)s,
+                        %(title)s,
+                        %(description)s,
                         %(created_at)s)
                     RETURNING id;""", {
                         'id': check['id'],
                         'status_code': check['status_code'],
+                        'h1': check['h1'],
+                        'title': check['title'],
+                        'description': str(check['description']),
                         'created_at': date.today()}
                 )
                 id = cur.fetchone()[0]
@@ -72,7 +81,7 @@ def get_urls() -> list:
     with connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
             cur.execute(
-                """SELECT
+                """SELECT DISTINCT
                     u.id,
                     u.name,
                     COALESCE(
@@ -85,9 +94,8 @@ def get_urls() -> list:
                 AND ch.created_at =
                     (SELECT MAX(created_at) FROM url_checks
                     WHERE url_id = u.id)
-                ORDER BY u.id;""")
+                ORDER BY u.id DESC;""")
             rows = cur.fetchall()
-    conn.close()
     return rows
 
 
@@ -98,12 +106,14 @@ def get_checks(id: int) -> list:
                 """SELECT
                 id,
                 status_code,
+                COALESCE(h1, '') as h1,
+                COALESCE(title, '') as title,
+                COALESCE(description, '') as description,
                 DATE(created_at) as created_at
                 FROM url_checks
                 WHERE url_id = %s
-                ORDER BY id;""", (id,))
+                ORDER BY id DESC;""", (id,))
             rows = cur.fetchall()
-    conn.close()
     return rows
 
 
