@@ -99,17 +99,14 @@ def url_check(id):
     url = db.find_url(id)
     try:
         response = requests.get(url.name)
-        status_code = response.status_code
-        if status_code != 200:
-            raise Exception
-        page_data = get_page_data(url.name)
+        response.raise_for_status()
+        page = get_page_data(url.name)
         db.add_check({
             'id': id,
-            'status_code': status_code,
-            'h1': page_data.get('h1'),
-            'title': page_data.get('title'),
-            'description': page_data.get('description')
-        })
+            'status_code': response.status_code,
+            'h1': page['h1'],
+            'title': page['title'],
+            'description': page['content']})
         flash('Страница успешно проверена', 'alert-success')
         return redirect(url_for('get_url_check', id=id))
     except Exception as err:
