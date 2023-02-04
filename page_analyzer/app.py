@@ -3,6 +3,7 @@ import page_analyzer.db as db
 import os
 import logging
 
+import requests
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 from validators.url import url
@@ -94,9 +95,13 @@ def get_url_check(id):
 
 @app.post('/urls/<int:id>/checks')
 def url_check(id):
+    url = db.find_url(id)
     try:
+        response = requests.get(url.name)
+        status_code = response.status_code
         db.add_check({
             'id': id,
+            'status_code': status_code
         })
         flash('Page successfully checked', 'alert-success')
         return redirect(url_for('get_url_check', id=id))

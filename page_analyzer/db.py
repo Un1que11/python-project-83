@@ -50,12 +50,15 @@ def add_check(check: dict):
                 cur.execute(
                     """INSERT INTO url_checks (
                         url_id,
+                        status_code,
                         created_at)
                     VALUES (
                         %(id)s,
+                        %(status_code)s,
                         %(created_at)s)
                     RETURNING id;""", {
                         'id': check['id'],
+                        'status_code': check['status_code'],
                         'created_at': date.today()}
                 )
                 id = cur.fetchone()[0]
@@ -94,6 +97,7 @@ def get_checks(id: int) -> list:
             cur.execute(
                 """SELECT
                 id,
+                status_code,
                 DATE(created_at) as created_at
                 FROM url_checks
                 WHERE url_id = %s
