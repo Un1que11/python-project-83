@@ -32,6 +32,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+@app.errorhandler(404)
+def page_not_found():
+    return render_template('404.html'), 404
+
+
 @app.route('/')
 def main_page():
     return render_template('index.html', main_page=main_page)
