@@ -2,6 +2,7 @@ import page_analyzer.db as db
 
 import os
 import logging
+from datetime import date
 
 from urllib.parse import urlparse
 from dotenv import load_dotenv
@@ -82,12 +83,28 @@ def post_urls():
 @app.get('/urls/<int:id>')
 def get_url_check(id):
     url_address = db.find_url(id)
+    checks = db.get_checks(id)
     messages = get_flashed_messages(with_categories=True)
     return render_template(
         'url_analyze.html',
         url=url_address,
+        checks=checks,
         messages=messages
     )
+
+
+@app.post('/urls/<int:id>/checks')
+def url_check(id):
+    try:
+        db.add_check({
+            'id': id,
+        })
+        flash('Page successfully checked', 'alert-success')
+        return redirect(url_for('get_url_check', id=id))
+    except Exception as err:
+        logging.error(err)
+        flash('An error occurred during the check', 'alert-danger')
+        return redirect(url_for('get_url_check', id=id))
 
 
 def get_correct_url(url_address: str) -> str:

@@ -43,16 +43,64 @@ def add_url(name: str):
         return err
 
 
+def add_check(check: dict):
+    try:
+        with connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """INSERT INTO url_checks (
+                        url_id,
+                        created_at)
+                    VALUES (
+                        %(id)s,
+                        %(created_at)s)
+                    RETURNING id;""", {
+                        'id': check['id'],
+                        'created_at': date.today()}
+                )
+                id = cur.fetchone()[0]
+                return id
+    except psycopg2.Error as err:
+        logging.error(err)
+        return err
+
+
 def get_urls() -> list:
     with connect() as conn:
-        with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            cursor.execute("""SELECT
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+            cur.execute(
+                """SELECT
                     u.id,
-                    u.name
-                    FROM urls AS u
-                    ORDER BY u.id;""")
-            urls = cursor.fetchall()
-    return urls
+                    u.name,
+                    COALESCE(
+                        CAST(
+                            DATE(ch.created_at) AS varchar), '') as created_at,
+                    COALESCE(ch.status_code, '') as status_code
+                FROM urls as u
+                LEFT JOIN url_checks AS ch
+                ON u.id = ch.url_id
+                AND ch.created_at =
+                    (SELECT MAX(created_at) FROM url_checks
+                    WHERE url_id = u.id)
+                ORDER BY u.id;""")
+            rows = cur.fetchall()
+    conn.close()
+    return rows
+
+
+def get_checks(id: int) -> list:
+    with connect() as conn:
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+            cur.execute(
+                """SELECT
+                id,
+                DATE(created_at) as created_at
+                FROM url_checks
+                WHERE url_id = %s
+                ORDER BY id;""", (id,))
+            rows = cur.fetchall()
+    conn.close()
+    return rows
 
 
 def find_url(value) -> dict:
