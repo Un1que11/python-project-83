@@ -1,50 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-{% block title %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page analyzer</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+{% extends "base.html" %}
+{% block flash %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert {{ category }}" role="alert">{{ message }}</div>
+        {% endfor %} 
+    {% endif %}
+{% endblock %} 
+{% block content %}
+<h1></h1>
+<div class="row">
+    <div class="col-12 col-md-10 col-lg-8 mx-auto border rounded-3 bg-light p-5">
+        <h1 class="display-3">Page analyzer</h1>
+        <p class="lead">Check websites for SEO suitability free</p>
+        <form class="d-flex justify-content-center" action="/urls" method="post" requiried="">
+          <input class="form-control form-control-lg" type="text" name="url" placeholder="https://www.example.com" value="{{ url|default('') }}">
+          <input class="btn btn-primary  btn-lg ms-3 px-5 text-uppercase mx-3" type="submit" value="Check">
+        </form>
+    </div>
+</div>
 {% endblock %}
-</head>
-<body>
-{% block header %}
-    <header>
-        <nav class="navbar bg-dark" data-bs-theme="dark">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('main_page') }}">Page analyzer</a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('get_urls') }}">Sites</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-    </header>
-{% endblock %}
-{% block main %}
-    <main>
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert {{ category }}" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        <div class="container-lg mt-3">
-            <h1></h1>
-            <div class="row">
-              <div class="col-12 col-md-10 col-lg-8 mx-auto border rounded-3 bg-light p-5">
-                <h1 class="display-3">Page analyzer</h1>
-                <p class="lead">Check websites for SEO suitability free</p>
-                <form class="d-flex justify-content-center" action="/urls" method="post" requiried="">
-                    <input class="form-control form-control-lg" type="text" name="url" placeholder="https://www.example.com" value="{{ url|default('') }}">
-                    <input class="btn btn-primary  btn-lg ms-3 px-5 text-uppercase mx-3" type="submit" value="Check">
-                </form>
-              </div>
-            </div>
-        </div>
-    </main>
-{% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-</body>
-</html>

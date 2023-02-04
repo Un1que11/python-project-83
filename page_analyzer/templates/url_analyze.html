@@ -1,16 +1,12 @@
-{% extends 'index.html' %}
-{% block title %}
-{{ super() }}
+{% extends 'base.html' %}
+{% block flash %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert {{ category }}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
-{% block header %}
-{{ super() }}
-{% endblock %}
-{% if messages %}
-    {% for category, message in messages %}
-        <div class="alert {{ category }}" role="alert">{{ message }}</div>
-    {% endfor %}
-{% endif %}
-{% block main %}
+{% block content %}
 <main class="flex-grow-1">
     <div class="container-lg mt-3">
         <h1>Site: {{ url.name }}</h1>

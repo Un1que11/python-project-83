@@ -30,16 +30,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def get_correct_url(url_address: str) -> str:
-    correct_url = urlparse(url_address)
-    return correct_url._replace(
-        path='',
-        params='',
-        query='',
-        fragment=''
-    ).geturl()
-
-
 @app.route('/')
 def main_page():
     return render_template('index.html', main_page=main_page)
@@ -98,3 +88,13 @@ def get_url_check(id):
         url=url_address,
         messages=messages
     )
+
+
+def get_correct_url(url_address: str) -> str:
+    correct_url = urlparse(url_address)
+    return correct_url._replace(
+        path='',
+        params='',
+        query='',
+        fragment=''
+    ).geturl()
