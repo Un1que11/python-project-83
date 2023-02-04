@@ -99,6 +99,7 @@ def url_check(id):
     url = db.find_url(id)
     try:
         response = requests.get(url.name)
+        response.raise_for_status()
         status_code = response.status_code
         page_data = get_page_data(url.name)
         db.add_check({
