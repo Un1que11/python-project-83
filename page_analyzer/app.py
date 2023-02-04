@@ -2,7 +2,6 @@ import page_analyzer.db as db
 
 import os
 import logging
-from datetime import date
 
 from urllib.parse import urlparse
 from dotenv import load_dotenv
