@@ -49,7 +49,7 @@ def post_urls():
     url_address = input_['url']
 
     if not url(url_address):
-        flash('Invalid URL', 'alert-danger')
+        flash('Некорректный URL', 'alert-danger')
         messages = get_flashed_messages(with_categories=True)
         return render_template(
             'index.html',
@@ -61,7 +61,7 @@ def post_urls():
     exist = db.is_exist_url(correct_url)
 
     if exist:
-        flash('Page already exists', 'alert-info')
+        flash('Страница уже существует', 'alert-info')
         return redirect(
             url_for('get_url_check', id=db.find_url(correct_url).id)
         )
@@ -69,7 +69,7 @@ def post_urls():
     result = db.add_url(correct_url)
 
     if result is None:
-        flash('An error has occurred', 'alert-danger')
+        flash('Произошла ошибка', 'alert-danger')
         messages = get_flashed_messages(with_categories=True)
         return render_template(
             'index.html',
@@ -77,7 +77,7 @@ def post_urls():
             messages=messages
         ), 500
     else:
-        flash('Page successfully added', 'alert-success')
+        flash('Страница успешно добавлена', 'alert-success')
         return redirect(url_for('get_url_check', id=result))
 
 
@@ -108,11 +108,11 @@ def url_check(id):
             'title': page_data.get('title'),
             'description': page_data.get('description')
         })
-        flash('Page successfully checked', 'alert-success')
+        flash('Страница успешно проверена', 'alert-success')
         return redirect(url_for('get_url_check', id=id))
     except Exception as err:
         logging.error(err)
-        flash('An error occurred during the check', 'alert-danger')
+        flash('Произошла ошибка при проверке', 'alert-danger')
         return redirect(url_for('get_url_check', id=id))
 
 

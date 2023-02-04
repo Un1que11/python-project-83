@@ -9,7 +9,7 @@
 {% block content %}
 <main class="flex-grow-1">
     <div class="container-lg mt-3">
-        <h1>Site: {{ url.name }}</h1>
+        <h1>Сайт: {{ url.name }}</h1>
         <div class="table-responsive">
             <table class="table table-bordered table-hover text-nowrap" data-test="url">
                 <tbody>
@@ -18,30 +18,30 @@
                         <td>{{ url.id }}</td>
                     </tr>
                     <tr>
-                        <td>Name</td>
+                        <td>Имя</td>
                         <td>{{ url.name }}</td>
                     </tr>
                     <tr>
-                        <td>Date of creation</td>
+                        <td>Дата создания</td>
                         <td>{{ url.created_at }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <h2 class="mt-5 mb-3">Checks</h2>
+        <h2 class="mt-5 mb-3">Проверки</h2>
         <form method="post" action="/urls/{{ url.id }}/checks">
-            <input type="submit" class="btn btn-primary" value="Run a check">
+            <input type="submit" class="btn btn-primary" value="Запустить проверку">
         </form>
         <div>
             <table class="table table-bordered table-hover mt-2" data-test="checks">
                 <tbody>
                     <tr>
                         <th>ID</th>
-                        <th>Code status</th>
+                        <th>Код ответа</th>
                         <th>h1</th>
                         <th>title</th>
                         <th>description</th>
-                        <th>Date of creation</th>
+                        <th>Дата создания</th>
                     </tr>
                     {% for check in checks %}
                     <tr>
