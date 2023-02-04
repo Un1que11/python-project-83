@@ -82,7 +82,7 @@ def post_urls():
             messages=messages
         ), 500
     else:
-        flash('Страница успешно добавлена', 'alert-success')
+        flash("Страница успешно добавлена", "alert-success")
         return redirect(url_for('get_url_check', id=result))
 
 
