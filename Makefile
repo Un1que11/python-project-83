@@ -5,6 +5,7 @@ dev:
 		poetry run flask --app page_analyzer:app --debug run
 
 install:
+		poetry lock
 		poetry install
 
 build:
