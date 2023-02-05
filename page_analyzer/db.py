@@ -6,23 +6,23 @@ from datetime import date
 import logging
 
 load_dotenv()
-DBNAME = os.getenv('DBNAME')
-USER_NAME = os.getenv('USER_NAME')
-PASSWORD = os.getenv('PASSWORD')
-HOST = os.getenv('HOST')
-PORT = os.getenv('PORT')
-# DATABASE_URL = os.getenv('DATABASE_URL')
+# DBNAME = os.getenv('DBNAME')
+# USER_NAME = os.getenv('USER_NAME')
+# PASSWORD = os.getenv('PASSWORD')
+# HOST = os.getenv('HOST')
+# PORT = os.getenv('PORT')
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 def connect():
-    return psycopg2.connect(
-        dbname=DBNAME,
-        user=USER_NAME,
-        password=PASSWORD,
-        host=HOST,
-        port=PORT
-    )
-    # return psycopg2.connect(DATABASE_URL)
+    # return psycopg2.connect(
+    #     dbname=DBNAME,
+    #     user=USER_NAME,
+    #     password=PASSWORD,
+    #     host=HOST,
+    #     port=PORT
+    # )
+    return psycopg2.connect(DATABASE_URL)
 
 
 def add_url(name: str):
