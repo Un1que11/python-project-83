@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from dotenv import load_dotenv
-from validators.url import url
+from validators.url import url as valid
 from flask import \
     Flask, \
     render_template, \
@@ -45,55 +45,55 @@ def main_page():
 @app.get('/urls')
 def get_urls():
     urls = db.get_urls()
-    return render_template('urls.html', urls=urls)
+    return render_template(
+        'urls.html',
+        urls=urls
+    )
 
 
 @app.post('/urls')
 def post_urls():
-    input_ = request.form.to_dict()
-    url_address = input_['url']
+    input = request.form.to_dict()
+    url = input['url']
 
-    if not url(url_address):
+    if not valid(url):
         flash('Некорректный URL', 'alert-danger')
         messages = get_flashed_messages(with_categories=True)
         return render_template(
             'index.html',
-            url=url_address,
-            messages=messages
-        ), 422
+            url=url,
+            messages=messages), 422
 
-    correct_url = get_correct_url(url_address)
-    exist = db.is_exist_url(correct_url)
+    url = get_correct_url(url)
+    exists = db.is_exist_url(url)
 
-    if exist:
+    if exists:
         flash('Страница уже существует', 'alert-info')
-        return redirect(
-            url_for('get_url_check', id=db.find_url(correct_url).id)
-        )
+        return redirect(url_for('url_get', id=db.find_url(url).id))
 
-    result = db.add_url(correct_url)
+    result = db.add_url(url)
 
-    if result is None:
-        flash('Произошла ошибка', 'alert-danger')
-        messages = get_flashed_messages(with_categories=True)
-        return render_template(
-            'index.html',
-            url=correct_url,
-            messages=messages
-        ), 500
-    else:
-        flash("Страница успешно добавлена", "alert-success")
-        return redirect(url_for('get_url_check', id=result))
+    match result:
+        case None:
+            flash('Произошла ошибка', 'alert-danger')
+            messages = get_flashed_messages(with_categories=True)
+            return render_template(
+                'index.html',
+                url=url,
+                messages=messages), 500
+        case _:
+            flash('Страница успешно добавлена', 'alert-success')
+            return redirect(url_for('url_get', id=result))
 
 
 @app.get('/urls/<int:id>')
-def get_url_check(id):
-    url_address = db.find_url(id)
+def url_get(id):
+    url = db.find_url(id)
     checks = db.get_checks(id)
     messages = get_flashed_messages(with_categories=True)
     return render_template(
         'url_analyze.html',
-        url=url_address,
+        url=url,
         checks=checks,
         messages=messages
     )
@@ -111,49 +111,44 @@ def url_check(id):
             'status_code': response.status_code,
             'h1': page['h1'],
             'title': page['title'],
-            'description': page['content']})
+            'description': page['description']})
         flash('Страница успешно проверена', 'alert-success')
-        return redirect(url_for('get_url_check', id=id))
+        return redirect(url_for('url_get', id=id))
     except Exception as err:
         logging.error(err)
         flash('Произошла ошибка при проверке', 'alert-danger')
-        return redirect(url_for('get_url_check', id=id))
+        return redirect(url_for('url_get', id=id))
 
 
-def get_correct_url(url_address: str) -> str:
-    correct_url = urlparse(url_address)
-    return correct_url._replace(
+def get_correct_url(url: str) -> str:
+    url = urlparse(url)
+    return url._replace(
         path='',
         params='',
         query='',
-        fragment=''
-    ).geturl()
+        fragment='').geturl()
 
 
 def get_page_data(url):
     page_data = {
         'h1': '',
         'title': '',
-        'content': ''
+        'description': ''
     }
-
     response = requests.get(url)
-    data = response.text
-    soup = BeautifulSoup(data, 'html.parser')
+    soup = BeautifulSoup(response.text, 'html.parser')
     h1 = soup.h1
     title = soup.title
-    description = soup.find('meta', attrs={'name': 'description'})['content']
+    content = soup.find(
+        "meta", attrs={'name': 'description'})
 
     page_data.update(
         {'h1': h1.get_text()}
     ) if h1 is not None else page_data.setdefault('h1', '')
-
     page_data.update(
         {'title': title.get_text()}
     ) if title is not None else page_data.setdefault('title', '')
-
     page_data.update(
-        {'description': description}
-    ) if description is not None else page_data.setdefault('content', '')
-
+        {'description': content["content"]}
+    ) if content is not None else page_data.setdefault('description', '')
     return page_data
