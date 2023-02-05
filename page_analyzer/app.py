@@ -73,17 +73,16 @@ def post_urls():
 
     result = db.add_url(url)
 
-    match result:
-        case None:
-            flash('Произошла ошибка', 'alert-danger')
-            messages = get_flashed_messages(with_categories=True)
-            return render_template(
-                'index.html',
-                url=url,
-                messages=messages), 500
-        case _:
-            flash('Страница успешно добавлена', 'alert-success')
-            return redirect(url_for('url_get', id=result))
+    if result is None:
+        flash('Произошла ошибка', 'alert-danger')
+        messages = get_flashed_messages(with_categories=True)
+        return render_template(
+            'index.html',
+            url=url,
+            messages=messages), 500
+    else:
+        flash('Страница успешно добавлена', 'alert-success')
+        return redirect(url_for('url_get', id=result))
 
 
 @app.get('/urls/<int:id>')
