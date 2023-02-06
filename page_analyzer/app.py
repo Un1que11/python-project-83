@@ -1,12 +1,9 @@
 import page_analyzer.db as db
+from page_analyzer.config import Config
+from page_analyzer.services import get_response, get_page_data, get_correct_url
 
-import os
 import logging
 
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse
-from dotenv import load_dotenv
 from validators.url import url as valid
 from flask import \
     Flask, \
@@ -15,13 +12,8 @@ from flask import \
     url_for, redirect, \
     get_flashed_messages
 
-load_dotenv()
-SECRET_KEY = os.getenv('SECRET_KEY')
-
 app = Flask(__name__)
-app.config['SECRET_KEY'] = SECRET_KEY
-
-client = app.test_client()
+app.config.from_object(Config)
 
 logging.basicConfig(
     filename='logs.log',
@@ -33,8 +25,13 @@ logger = logging.getLogger(__name__)
 
 
 @app.errorhandler(404)
-def page_not_found():
-    return render_template('404.html'), 404
+def page_not_found(error):
+    return render_template('errors/404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template('errors/500.html'), 500
 
 
 @app.route('/')
@@ -102,7 +99,7 @@ def url_get(id):
 def url_check(id):
     url = db.find_url(id)
     try:
-        response = requests.get(url.name)
+        response = get_response(url.name)
         response.raise_for_status()
         page = get_page_data(url.name)
         db.add_check({
@@ -117,37 +114,3 @@ def url_check(id):
         logging.error(err)
         flash('Произошла ошибка при проверке', 'alert-danger')
         return redirect(url_for('url_get', id=id))
-
-
-def get_correct_url(url: str) -> str:
-    url = urlparse(url)
-    return url._replace(
-        path='',
-        params='',
-        query='',
-        fragment='').geturl()
-
-
-def get_page_data(url):
-    page_data = {
-        'h1': '',
-        'title': '',
-        'description': ''
-    }
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    h1 = soup.h1
-    title = soup.title
-    content = soup.find(
-        "meta", attrs={'name': 'description'})
-
-    page_data.update(
-        {'h1': h1.get_text()}
-    ) if h1 is not None else page_data.setdefault('h1', '')
-    page_data.update(
-        {'title': title.get_text()}
-    ) if title is not None else page_data.setdefault('title', '')
-    page_data.update(
-        {'description': content["content"]}
-    ) if content is not None else page_data.setdefault('description', '')
-    return page_data
