@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
@@ -38,4 +40,9 @@ def get_page_data(url):
 
 
 def get_response(url):
-    return requests.get(url)
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response
+    except Exception as err:
+        logging.error(err)

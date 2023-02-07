@@ -100,7 +100,6 @@ def url_check(id):
     url = db.find_url(id)
     try:
         response = get_response(url.name)
-        response.raise_for_status()
         page = get_page_data(url.name)
         db.add_check({
             'id': id,
